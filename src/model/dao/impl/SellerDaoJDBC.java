@@ -42,30 +42,15 @@ public class SellerDaoJDBC implements SellerDao {
 
         PreparedStatement st = null;
         ResultSet rs = null;
-
-        String sql = "SELECT seller.*, department.Name as DepName "
-                + "FROM seller INNER JOIN department "
-                + "ON seller.DepartmentId = department.Id "
-                + "WHERE seller.Id = ?";
-
         try {
-            st = conn.prepareStatement(sql);
+            st = conn.prepareStatement("SELECT seller.*, department.Name as DepName FROM seller INNER JOIN department "
+                                        + "ON seller.DepartmentId = department.Id WHERE seller.Id = ?");
             st.setInt(1, id);
             rs = st.executeQuery();
 
             if (rs.next()) {
 
-                Seller obj = new Seller(
-                        rs.getInt("Id"),
-                        rs.getString("Name"),
-                        rs.getString("Email"),
-                        rs.getDate("BirthDate"),
-                        rs.getDouble("BaseSalary"),
-                        new Department(
-                                rs.getInt("DepartmentId"),
-                                rs.getString("DepName")
-                        )
-                );
+                Seller obj = getSeller(rs, getDepartment(rs));
                 
                 return obj;
             }
@@ -82,6 +67,19 @@ public class SellerDaoJDBC implements SellerDao {
     @Override
     public List<Seller> findAll() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private Department getDepartment(ResultSet rs) throws SQLException {
+        return new Department(rs.getInt("DepartmentId"),rs.getString("DepName"));
+    }
+
+    private Seller getSeller(ResultSet rs, Department dep) throws SQLException {
+        return new Seller(rs.getInt("Id"),
+                        rs.getString("Name"),
+                        rs.getString("Email"),
+                        rs.getDate("BirthDate"),
+                        rs.getDouble("BaseSalary"),
+                        dep);
     }
 
 }
