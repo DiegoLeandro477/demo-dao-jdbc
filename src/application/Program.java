@@ -1,5 +1,6 @@
 package application;
 
+import java.util.Date;
 import java.util.List;
 import model.dao.DaoFactory;
 import model.dao.SellerDao;
@@ -27,6 +28,10 @@ public class Program {
         list = sellerDao.findAll();
         list.forEach(System.out::println);
         
+        System.out.println("=== TEST 4: seller insert =====");
+        Seller newSeller = new Seller(null, "Diego", "diego@gmail.com", new Date(), 6000.0, department);
+        sellerDao.insert(newSeller);
+        System.out.println("Novo dado colocado no banco de dados: \n" + sellerDao.findById(newSeller.getId()));
     }
     
 }
