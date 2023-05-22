@@ -32,6 +32,12 @@ public class Program {
         Seller newSeller = new Seller(null, "Diego", "diego@gmail.com", new Date(), 6000.0, department);
         sellerDao.insert(newSeller);
         System.out.println("Novo dado colocado no banco de dados: \n" + sellerDao.findById(newSeller.getId()));
+        
+        System.out.println("=== TEST 5: seller update =====");
+        seller = sellerDao.findById(1);
+        seller.setName("MARTINHA WAINE");
+        sellerDao.update(seller);
+        System.out.println("Novo dado colocado no banco de dados: \n" + sellerDao.findById(seller.getId()));
     }
     
 }
