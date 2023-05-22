@@ -34,10 +34,16 @@ public class Program {
         System.out.println("Novo dado colocado no banco de dados: \n" + sellerDao.findById(newSeller.getId()));
         
         System.out.println("=== TEST 5: seller update =====");
-        seller = sellerDao.findById(1);
+        seller = sellerDao.findById(3);
         seller.setName("MARTINHA WAINE");
         sellerDao.update(seller);
         System.out.println("Novo dado colocado no banco de dados: \n" + sellerDao.findById(seller.getId()));
+        
+        System.out.println("=== TEST 6: seller delete =====");
+        sellerDao.deleteById(seller.getId());
+        System.out.println("Seller apagado: "+ seller.getId());
+        
+        
     }
     
 }
