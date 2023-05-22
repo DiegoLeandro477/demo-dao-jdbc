@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import model.entities.Department;
 
 /**
@@ -66,7 +68,37 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public List<Seller> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        try {
+            st = conn.prepareStatement("SELECT seller.*, department.Name as DepName FROM seller INNER JOIN department "
+                    + "ON seller.DepartmentId = department.Id ORDER BY Name");
+            rs = st.executeQuery();
+
+            List<Seller> list = new ArrayList<>();
+            Map<Integer, Department> map = new HashMap<>();
+
+            while (rs.next()) {
+                
+                Department dep = map.get(rs.getInt("DepartmentId"));
+                if (dep == null) {
+                    dep = getDepartment(rs);
+                    map.put(rs.getInt("DepartmentId"), dep);
+                }
+
+                Seller obj = getSeller(rs, dep);
+                list.add(obj);
+            }
+
+            return list;
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.close(st, rs);
+        }
     }
 
     private Department getDepartment(ResultSet rs) throws SQLException {
@@ -87,7 +119,6 @@ public class SellerDaoJDBC implements SellerDao {
 
         PreparedStatement st = null;
         ResultSet rs = null;
-        Department dep = null;
 
         try {
             st = conn.prepareStatement("SELECT seller.*, department.Name as DepName FROM seller INNER JOIN department "
@@ -98,8 +129,9 @@ public class SellerDaoJDBC implements SellerDao {
             List<Seller> list = new ArrayList<>();
 
             while (rs.next()) {
-                if (department.getName() != rs.getString("DepName"))
+                if (department.getName() != rs.getString("DepName")) {
                     department.setName(rs.getString("DepName"));
+                }
                 Seller obj = getSeller(rs, department);
                 list.add(obj);
             }
