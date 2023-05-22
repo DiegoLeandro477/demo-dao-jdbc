@@ -47,8 +47,7 @@ public class SellerDaoJDBC implements SellerDao {
             if (i > 0) {
                 ResultSet rs = st.getGeneratedKeys();   // RECUPERA O ID do obj que foi para o DB
                 if (rs.next()){
-                    int id = rs.getInt(1);
-                    obj.setId(id);
+                    obj.setId(rs.getInt(1));
                 }
                 DB.close(rs, null);
             } else {
@@ -70,7 +69,7 @@ public class SellerDaoJDBC implements SellerDao {
                 + "WHERE Id = ?";
         
         try {
-            st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            st = conn.prepareStatement(sql);
             st.setString(1, obj.getName());
             st.setString(2, obj.getEmail());
             st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime()));
@@ -102,16 +101,20 @@ public class SellerDaoJDBC implements SellerDao {
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
         }
+        finally {
+            DB.close(st, null);
+        }
     }
 
     @Override
     public Seller findById(Integer id) {
 
+        String sql = "SELECT seller.*, department.Name as DepName FROM seller INNER JOIN department "
+                    + "ON seller.DepartmentId = department.Id WHERE seller  .Id = ?";
         PreparedStatement st = null;
         ResultSet rs = null;
         try {
-            st = conn.prepareStatement("SELECT seller.*, department.Name as DepName FROM seller INNER JOIN department "
-                    + "ON seller.DepartmentId = department.Id WHERE seller.Id = ?");
+            st = conn.prepareStatement(sql);
             st.setInt(1, id);
             rs = st.executeQuery();
 
