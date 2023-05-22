@@ -3,13 +3,9 @@ package db;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author ferruje
@@ -37,7 +33,7 @@ public class DB {
     // Lendo o arquivo properties para retornar os dados necessários para conexão ao BD
     private static Properties loadProperties() {
         // Lendo arquivo em src/bd.properties
-        try (FileInputStream fs = new FileInputStream("src/bd.properties")) {
+        try (FileInputStream fs = new FileInputStream("bd.properties")) {
             Properties props = new Properties();    // Instanciando uma nova properties vazia
             props.load(fs);     // lendo o arquivo com o objeto
             return props;
